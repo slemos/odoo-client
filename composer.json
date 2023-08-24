@@ -1,5 +1,5 @@
 {
-    "name": "robroypt/odoo-client",
+    "name": "slemos/odoo-client",
     "type": "library",
     "description": "A PHP Client for Odoo using Ripcord RPC library (as used in Odoo Web API docs)",
     "keywords": ["RPC", "XML", "XMLRPC", "Odoo"],
