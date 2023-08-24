@@ -3,8 +3,9 @@
     "type": "library",
     "description": "A PHP Client for Odoo using Ripcord RPC library (as used in Odoo Web API docs)",
     "keywords": ["RPC", "XML", "XMLRPC", "Odoo"],
-    "homepage": "https://github.com/robroypt/odooclient",
+    "homepage": "https://github.com/slemos/odooclient",
     "license": "MIT",
+    "version": "0.1.0",
     "authors": [
         {
             "name": "Rob Roy",
