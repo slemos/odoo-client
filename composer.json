@@ -5,11 +5,11 @@
     "keywords": ["RPC", "XML", "XMLRPC", "Odoo"],
     "homepage": "https://github.com/slemos/odooclient",
     "license": "MIT",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "authors": [
         {
-            "name": "Rob Roy",
-            "email": "rob@pervasivetelemetry.com.au"
+            "name": "Sebastian Lemos",
+            "email": "sebastian@delsurinversiones.cl"
         }
     ],
     "require": {
