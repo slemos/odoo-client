@@ -74,6 +74,21 @@ class Client
 	protected $path;
 
 	/**
+	 * Memcached variable
+	 */
+	public $memcached;
+
+	/**
+	 * Memcached is server up?
+	 */
+	public $memcached_up = false;
+
+	/**
+	 * Memcached cache timeout
+	 */
+	public $memcached_timeout = 60*60*12;
+
+	/**
 	 * Odoo constructor
 	 *
 	 * @param string     $host       The url
@@ -83,6 +98,15 @@ class Client
 	 */
 	public function __construct($host, $database, $user, $password)
 	{
+		try {
+			$this->memcached = new \Memcached();
+			$this->memcached_up = $this->memcached->addServer ('127.0.0.1', 11211);
+		}
+		catch (\Exception $e) {
+			$this->memcached = null;
+			$this->memcached_up = false;
+		}
+
 		$this->host = $host;
 		$this->database = $database;
 		$this->user = $user;
@@ -113,6 +137,14 @@ class Client
 	 */
 	public function search($model, $criteria, $offset = 0, $limit = 100, $order = '')
 	{
+		if ($this->memcached_up) {
+			$key = md5($model . serialize($criteria) . $offset . $limit);
+			$response = $this->memcached->get($key);
+			if ($response) {
+				return $response;
+			}
+		}
+
 		$response = $this->getClient('object')->execute_kw(
             $this->database,
             $this->uid(),
@@ -122,6 +154,9 @@ class Client
             [$criteria],
             ['offset'=>$offset, 'limit'=>$limit, 'order' => $order]
         );
+
+		$key = md5($model . serialize($criteria) . $offset . $limit);
+		if ($this->memcached_up) $this->memcached->set($key, $response, $this->memcached_timeout);
 
 		return $response;
 	}
@@ -136,6 +171,15 @@ class Client
 	 */
 	public function search_count($model, $criteria)
 	{
+		// Adding memcached support
+		if ($this->memcached_up) {
+			$key = md5($model . serialize($criteria));
+			$response = $this->memcached->get($key);
+			if ($response) {
+				return $response;
+			}
+		}
+
 		$response = $this->getClient('object')->execute_kw(
             $this->database,
             $this->uid(),
@@ -144,6 +188,10 @@ class Client
             'search_count',
             [$criteria]
         );
+
+		//Storing result in memcached
+		$key = md5($model . serialize($criteria));
+		if ($this->memcached_up) $this->memcached->set($key, $response, $this->memcached_timeout);
 
 		return $response;
 	}
@@ -159,6 +207,14 @@ class Client
 	 */
 	public function read($model, $ids, $fields = array())
 	{
+		//Adding memcached support
+		if ($this->memcached_up) {
+			$key = md5($model . serialize($ids) . serialize($fields));
+			$response = $this->memcached->get($key);
+			if ($response) {
+				return $response;
+			}
+		}
 
         $response = $this->getClient('object')->execute_kw(
             $this->database,
@@ -169,6 +225,10 @@ class Client
             [$ids],
             ['fields'=>$fields]
         );
+
+		//Storing result in memcached
+		$key = md5($model . serialize($ids) . serialize($fields));
+		if ($this->memcached_up) $this->memcached->set($key, $response, $this->memcached_timeout);
 
 		return $response;
 	}
@@ -185,6 +245,15 @@ class Client
 	 */
 	public function search_read($model, $criteria, $fields = array(), $limit=100, $order = '')
 	{
+		//Adding memcached support
+		if ($this->memcached_up) {
+			$key = md5($model . serialize($criteria) . serialize($fields) . $limit);
+			$response = $this->memcached->get($key);
+			if ($response) {
+				return $response;
+			}
+		}
+
         $response = $this->getClient('object')->execute_kw(
             $this->database,
             $this->uid(),
@@ -194,6 +263,10 @@ class Client
             [$criteria],
             ['fields'=>$fields,'limit'=>$limit, 'order' => $order]
         );
+
+		//Storing result in memcached
+		$key = md5($model . serialize($criteria) . serialize($fields) . $limit);
+		if ($this->memcached_up) $this->memcached->set($key, $response, $this->memcached_timeout);
 
 		return $response;
 	}
