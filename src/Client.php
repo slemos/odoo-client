@@ -86,7 +86,7 @@ class Client
 	/**
 	 * Memcached cache timeout
 	 */
-	public $memcached_timeout = 60*60*12;
+	public $memcached_timeout = 60*60;
 
 	/**
 	 * Odoo constructor
