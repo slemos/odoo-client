@@ -5,7 +5,7 @@
     "keywords": ["RPC", "XML", "XMLRPC", "Odoo"],
     "homepage": "https://github.com/slemos/odooclient",
     "license": "MIT",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "authors": [
         {
             "name": "Sebastian Lemos",
