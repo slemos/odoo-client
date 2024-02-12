@@ -298,7 +298,7 @@ class Client
 	 * Update model(s)
 	 *
 	 * @param string $model  Model
-	 * @param array  $ids     Model ids to update
+	 * @param int    $id     Model ids to update
 	 * @param array  $fields A associative array (format: ['field' => 'value'])
 	 *
 	 * @return array
