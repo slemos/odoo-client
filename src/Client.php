@@ -209,10 +209,17 @@ class Client
 	{
 		//Adding memcached support
 		if ($this->memcached_up) {
-			$key = md5($model . serialize($ids) . serialize($fields));
-			$response = $this->memcached->get($key);
-			if ($response) {
-				return $response;
+			// Search if we have the model updated in memcached
+			$key = md5($model . serialize($ids));
+			if (1 === $this->memcached->get($key)) {
+				$this->memcached->delete($key);
+			}
+			else {
+				$key = md5($model . serialize($ids) . serialize($fields));
+				$response = $this->memcached->get($key);
+				if ($response) {
+					return $response;
+				}
 			}
 		}
 
@@ -265,9 +272,10 @@ class Client
         );
 
 		//Storing result in memcached
-		$key = md5($model . serialize($criteria) . serialize($fields) . $limit);
-		if ($this->memcached_up) $this->memcached->set($key, $response, $this->memcached_timeout);
-
+		if ($this->memcached_up) {
+			$key = md5($model . serialize($criteria) . serialize($fields) . $limit);
+			$this->memcached->set($key, $response, $this->memcached_timeout);
+		}
 		return $response;
 	}
 
@@ -316,6 +324,12 @@ class Client
                 $fields
             ]
         );
+
+		//Storing result in memcached to mark dirty cache
+		if ($this->memcached_up) {
+			$key = md5($model . serialize($ids));
+			$this->memcached->set($key, 1, $this->memcached_timeout);
+		}
 
 		return $response;
 	}
