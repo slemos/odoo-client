@@ -404,4 +404,13 @@ class Client
 
 		return $this->uid;
 	}
+
+	/**
+	 * Flush memcached
+	 */
+	public function flush() {
+		if ($this->memcached_up) {
+			$this->memcached->flush();
+		}
+	}
 }
