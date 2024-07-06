@@ -98,11 +98,17 @@ class Client
 	 */
 	public function __construct($host, $database, $user, $password)
 	{
-		try {
-			$this->memcached = new \Memcached();
-			$this->memcached_up = $this->memcached->addServer ('127.0.0.1', 11211);
+		if (class_exists('\Memcached')) {
+			try {
+				$this->memcached = new \Memcached();
+				$this->memcached_up = $this->memcached->addServer ('127.0.0.1', 11211);
+			}
+			catch (\Exception $e) {
+				$this->memcached = null;
+				$this->memcached_up = false;
+			}
 		}
-		catch (\Exception $e) {
+		else {
 			$this->memcached = null;
 			$this->memcached_up = false;
 		}
