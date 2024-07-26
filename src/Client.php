@@ -101,7 +101,7 @@ class Client
 		if (class_exists('\Memcached')) {
 			try {
 				$this->memcached = new \Memcached();
-				$this->memcached_up = $this->memcached->addServer ('127.0.0.1', 11211);
+				$this->memcached_up = $this->memcached->addServer ('::1', 11211);
 			}
 			catch (\Exception $e) {
 				$this->memcached = null;
